@@ -19,23 +19,28 @@ const RegisterScreen = ({ navigation }) => {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
-
+  
     setLoading(true);
     try {
+      console.log("Intentando registrar usuario...");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(userCredential)
       const user = userCredential.user;
-
+  
       // Guardar datos del usuario en Firestore
-      await setDoc(doc(database, 'users', user.uid), { name, email, password, age, specialty });
-
+      const save = await setDoc(doc(database, 'users', user.uid), { name, email, password, age, specialty });
+      if (save) console.log("Se ejecutó setDoc en registrar");
+  
       Alert.alert('Éxito', 'Usuario registrado correctamente');
       navigation.navigate('Login');
     } catch (error) {
+      console.error("Error en registro:", error);  // Agrega más detalles en la consola
       Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
